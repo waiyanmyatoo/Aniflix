@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "255737227433",
+    "firebase_url": "https://aniflix-43100.firebaseio.com",
+    "project_id": "aniflix-43100",
+    "storage_bucket": "aniflix-43100.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255737227433:android:82f4e767e16969ab10a1b8",
+        "android_client_info": {
+          "package_name": "com.anime.aniflix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255737227433-445l866ejuporp210isj1nkjf1upn8n6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVFKaJqlAY0p04_oobDj-ZFEQmHmzHgGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255737227433-445l866ejuporp210isj1nkjf1upn8n6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
