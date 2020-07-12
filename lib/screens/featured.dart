@@ -32,143 +32,157 @@ class _FeaturedState extends State<Featured> {
     final anime = Provider.of<List<Movie>>(context) ?? [];
     final List<Movie> result =
         anime.where((element) => element.typeMovie == 'Featured').toList();
-    return ListView(
-      children: <Widget>[
-        Container(
-          //color: Colors.green,
-          height: ((MediaQuery.of(context).size.height) / 2.8) - 20,
-          width: MediaQuery.of(context).size.width,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: result.length,
-            itemBuilder: (context, int index) {
-              return AnimatedBuilder(
-                animation: _pageController,
-                builder: (BuildContext context, Widget widget) {
-                  double value = 1;
-                  if (_pageController.position.haveDimensions) {
-                    value = _pageController.page - index;
-                    value = (1 - (value.abs() * 0.3) + 0.06).clamp(0.0, 1.0);
-                  }
-                  return Center(
-                    child: SizedBox(
-                      height: Curves.easeInOut.transform(value) *
-                          (MediaQuery.of(context).size.width / 1.8),
-                      width: Curves.easeInOut.transform(value) * 400.0,
-                      child: widget,
+
+    if (anime.isNotEmpty) {
+      return ListView(
+        children: <Widget>[
+          Container(
+            //color: Colors.green,
+            height: ((MediaQuery.of(context).size.height) / 2.8) - 20,
+            width: MediaQuery.of(context).size.width,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: result.length,
+              itemBuilder: (context, int index) {
+                return AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (BuildContext context, Widget widget) {
+                    double value = 1;
+                    if (_pageController.position.haveDimensions) {
+                      value = _pageController.page - index;
+                      value = (1 - (value.abs() * 0.3) + 0.06).clamp(0.0, 1.0);
+                    }
+                    return Center(
+                      child: SizedBox(
+                        height: Curves.easeInOut.transform(value) *
+                            (MediaQuery.of(context).size.width / 1.8),
+                        width: Curves.easeInOut.transform(value) * 400.0,
+                        child: widget,
+                      ),
+                    );
+                  },
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MovieScreen(movieid: result[index].id),
+                      ),
                     ),
-                  );
-                },
-                child: GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MovieScreen(movieid: result[index].id),
-                    ),
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Center(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 3.0, vertical: 14.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //     color: Colors.black45,
-                            //     offset: Offset(0.0, 4.0),
-                            //     blurRadius: 6.0,
-                            //   ),
-                            // ],
-                          ),
-                          child: Center(
-                            child: Hero(
-                              tag: anime[index].id,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20.0),
-                                child: FadeInImage.assetNetwork(
-                                  placeholder: 'assets/images/source.gif',
-                                  image: result[index].imageUrl,
-                                  height: 220.0,
-                                  fit: BoxFit.cover,
+                    child: Stack(
+                      children: <Widget>[
+                        Center(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 3.0, vertical: 14.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              // boxShadow: [
+                              //   BoxShadow(
+                              //     color: Colors.black45,
+                              //     offset: Offset(0.0, 4.0),
+                              //     blurRadius: 6.0,
+                              //   ),
+                              // ],
+                            ),
+                            child: Center(
+                              child: Hero(
+                                tag: anime[index].id,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: 'assets/images/source.gif',
+                                    image: result[index].imageUrl,
+                                    height: 220.0,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        left: 30.0,
-                        bottom: 40.0,
-                        child: Container(
-                          width: 250.0,
-                          child: Text(
-                            result[index].title.toUpperCase(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
+                        Positioned(
+                          left: 30.0,
+                          bottom: 40.0,
+                          child: Container(
+                            width: 250.0,
+                            child: Text(
+                              result[index].title.toUpperCase(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Container(
+            height: 50.0,
+            child: ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              scrollDirection: Axis.horizontal,
+              itemCount: labels.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  margin: EdgeInsets.all(10.0),
+                  width: 130.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.white,
+                    // gradient: LinearGradient(
+                    //   begin: Alignment.topLeft,
+                    //   end: Alignment.bottomRight,
+                    //   colors: [
+                    //     Colors.pink,
+                    //     Colors.red,
+                    //   ],
+                    // ),
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: Colors.red,
+                    //     offset: Offset(0.0, 6.0),
+                    //     blurRadius: 6.0,
+                    //   ),
+                    // ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      labels[index].toUpperCase(),
+                      style: TextStyle(
+                        color: Color(0xff001030),
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.8,
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        Container(
-          height: 70.0,
-          child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            scrollDirection: Axis.horizontal,
-            itemCount: labels.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                margin: EdgeInsets.all(10.0),
-                width: 130.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xffeb1e41),
-                      Color(0xFF9E1F28),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF9E1F28),
-                      offset: Offset(0.0, 2.0),
-                      blurRadius: 6.0,
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    labels[index].toUpperCase(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.8,
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        SizedBox(height: 15.0),
-        VerticalMovieWidge(title: 'Popular', typeMovie: "Popular"),
-        SizedBox(height: 15.0),
-        VerticalMovieWidge(title: 'Trending', typeMovie: "Popular"),
-        SizedBox(height: 15.0),
-      ],
-    );
+          SizedBox(height: 15.0),
+          VerticalMovieWidge(title: 'Popular', typeMovie: "Popular"),
+          SizedBox(height: 15.0),
+          VerticalMovieWidge(title: 'Trending', typeMovie: "Popular"),
+          SizedBox(
+            height: 20,
+          ),
+        ],
+      );
+    } else {
+      return Container(
+          // child: CircularProgressIndicator(
+          //   backgroundColor: Colors.white38,
+          //   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          // ),
+          //child: Image.asset('assets/images/source.gif')
+          );
+    }
   }
 }

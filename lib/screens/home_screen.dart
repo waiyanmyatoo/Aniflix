@@ -8,7 +8,7 @@ import 'package:flutter_netflix_ui_redesign/screens/anime_movies.dart';
 import 'package:flutter_netflix_ui_redesign/screens/favorite.dart';
 import 'package:flutter_netflix_ui_redesign/screens/featured.dart';
 import 'package:flutter_netflix_ui_redesign/screens/movie_screen.dart';
-import 'package:flutter_netflix_ui_redesign/video.dart';
+import 'package:flutter_netflix_ui_redesign/splashScreen.dart';
 import 'package:flutter_netflix_ui_redesign/widgets/content_scroll.dart';
 import 'package:flutter_netflix_ui_redesign/services/database.dart';
 import 'package:provider/provider.dart';
@@ -187,92 +187,119 @@ class _HomeScreenState extends State<HomeScreen> {
     //final anime = Provider.of<List<Movie>>(context) ?? [];
     return StreamProvider<List<Movie>>.value(
       value: DatabaseServices().anime,
-      child: Scaffold(
-        //backgroundColor: Color(0xff1c1742).withOpacity(0.9),
-        //backgroundColor: Colors.deepPurple[700].withOpacity(0.9),
-        backgroundColor: Color(0xff001030),
-        //backgroundColor: Color(0xffeb1e41).withOpacity(0.3),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          title: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: appBarTitle,
-          ),
-          // leading: IconButton(
-          //   padding: EdgeInsets.only(left: 30.0),
-          //   onPressed: () {
-          //     print('Menu');
-          //   },
-          //   icon: menuBtn,
-          //   iconSize: 30.0,
-          //   color: Colors.white,
+      child: Container(
+        decoration: BoxDecoration(
+          // gradient: LinearGradient(
+          //   begin: Alignment.topLeft,
+          //   end: Alignment.bottomRight,
+          //   colors: [
+          //     Color(0xffED46D5),
+          //     Color(0xffAA6AE0),
+          //     Color(0xff7089EB),
+          //     Color(0xff37A6F4),
+          //     Color(0xff2DA9F0),
+          //   ],
           // ),
-          actions: <Widget>[
-            Builder(
-              builder: (context) => IconButton(
-                padding: EdgeInsets.only(right: 8.0),
-                onPressed: () async {
-                  final Movie result = await showSearch(
-                      context: context, delegate: AnimeSearch());
-                  if (result != null) {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => MovieScreen(movieid: result.id),
-                      ),
-                    );
+          //color: Color(0xff171723),
+          color: Color(0xff001030),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          //backgroundColor: Colors.deepPurple[700].withOpacity(0.9),
+          //backgroundColor: Color(0xff001030),
+          //backgroundColor: Color(0xFF2D2F41),
+          //backgroundColor: Color(0xff171723),
+          // backgroundColor: LinearGradient(
+          //             begin: Alignment.topLeft,
+          //             end: Alignment.bottomRight,
+          //             colors: [
+          //               Colors.pink,
+          //               Colors.red,
+          //             ],
+          //           ),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            title: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: appBarTitle,
+            ),
+            // leading: IconButton(
+            //   padding: EdgeInsets.only(left: 30.0),
+            //   onPressed: () {
+            //     print('Menu');
+            //   },
+            //   icon: menuBtn,
+            //   iconSize: 30.0,
+            //   color: Colors.white,
+            // ),
+            actions: <Widget>[
+              Builder(
+                builder: (context) => IconButton(
+                  padding: EdgeInsets.only(right: 8.0),
+                  onPressed: () async {
+                    final Movie result = await showSearch(
+                        context: context, delegate: AnimeSearch());
+                    if (result != null) {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MovieScreen(movieid: result.id),
+                        ),
+                      );
+                    }
+                  },
+                  icon: searchIcon,
+                  iconSize: 30.0,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: WillPopScope(
+              onWillPop: onWillPop,
+              child: OfflineBuilder(
+                connectivityBuilder: (BuildContext context,
+                    ConnectivityResult connectivity, Widget child) {
+                  final bool connected =
+                      connectivity != ConnectivityResult.none;
+                  if (connected == true) {
+                    return finalConnection =
+                        connectionState(callPage(_currentIndex));
                   }
+                  return finalConnection = connectionState(connectionOffline());
                 },
-                icon: searchIcon,
-                iconSize: 30.0,
-                color: Colors.white,
+                child: Container(child: finalConnection),
               ),
             ),
-          ],
-        ),
-        body: SafeArea(
-          child: WillPopScope(
-            onWillPop: onWillPop,
-            child: OfflineBuilder(
-              connectivityBuilder: (BuildContext context,
-                  ConnectivityResult connectivity, Widget child) {
-                final bool connected = connectivity != ConnectivityResult.none;
-                if (connected == true) {
-                  return finalConnection =
-                      connectionState(callPage(_currentIndex));
-                }
-                return finalConnection = connectionState(connectionOffline());
-              },
-              child: Container(child: finalConnection),
-            ),
           ),
-        ),
-        bottomNavigationBar: CurvedNavigationBar(
-          color: Colors.white,
-          animationDuration: Duration(
-            milliseconds: 500,
-          ),
-          animationCurve: Curves.easeInOut,
-          backgroundColor: Color(0xff001030),
-          height: MediaQuery.of(context).padding.top * 2,
-          index: 2,
-          items: <Widget>[
-            Icon(
-              Icons.movie,
-              size: 25.0,
-              color: Color(0xff000f34),
+          bottomNavigationBar: CurvedNavigationBar(
+            color: Colors.white,
+            animationDuration: Duration(
+              milliseconds: 500,
             ),
-            Icon(Icons.view_list, size: 25.0, color: Color(0xff000f34)),
-            Icon(Icons.home, size: 25.0, color: Color(0xff000f34)),
-            Icon(Icons.favorite, size: 25.0, color: Color(0xff000f34)),
-            Icon(Icons.settings, size: 25.0, color: Color(0xff000f34)),
-          ],
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
+            animationCurve: Curves.easeInOut,
+            backgroundColor: Color(0xff001030),
+            height: MediaQuery.of(context).padding.top * 2,
+            index: 2,
+            items: <Widget>[
+              Icon(
+                Icons.movie,
+                size: 25.0,
+                color: Color(0xff000f34),
+              ),
+              Icon(Icons.live_tv, size: 25.0, color: Color(0xff000f34)),
+              Icon(Icons.home, size: 25.0, color: Color(0xff000f34)),
+              Icon(Icons.favorite, size: 25.0, color: Color(0xff000f34)),
+              Icon(Icons.settings, size: 25.0, color: Color(0xff000f34)),
+            ],
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
         ),
       ),
     );
@@ -320,76 +347,47 @@ class AnimeSearch extends SearchDelegate<Movie> {
 
         if (results.isNotEmpty) {
           if (query.isNotEmpty) {
-            return Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.live_tv,
-                        size: 30,
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        'Results',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
+            return Container(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 20,
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Divider(
-                  indent: 15,
-                  endIndent: 15,
-                  color: Colors.black38,
-                ),
-                ListView(
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  children: results
-                      .map<Padding>((a) => Padding(
-                            padding: EdgeInsets.only(
-                                top: 8.0, left: 8.0, right: 8.0),
-                            child: Material(
-                              color: Colors.white,
-                              elevation: 14.0,
-                              //margin: EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 0.0),
-                              borderRadius: BorderRadius.circular(24.0),
-                              shadowColor: Colors.black,
-                              child: ListTile(
-                                leading: Icon(
-                                  Icons.check,
-                                ),
-                                title: Text(
-                                  a.title,
-                                  // style: TextStyle(
-                                  //   fontSize: 18.0,
-                                  //   fontWeight: FontWeight.w600,
-                                  //   color: Colors.purple,
-                                  // ),
-                                  textAlign: TextAlign.justify,
-                                ),
-                                onTap: () => {
-                                  close(context, a),
-                                },
-                              ),
-                            ),
-                          ))
-                      .toList(),
-                ),
-              ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.live_tv,
+                          size: 30,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Text(
+                          'Results',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Divider(
+                    indent: 15,
+                    endIndent: 15,
+                    color: Colors.black38,
+                  ),
+                  new Expanded(
+                    child: gridView(results.toList(), context),
+                  ),
+                ],
+              ),
             );
           }
           return Center(
@@ -402,6 +400,75 @@ class AnimeSearch extends SearchDelegate<Movie> {
       },
     );
   }
+
+  gridView(List<Movie> movie, BuildContext context) => GridView.count(
+        padding: EdgeInsets.all(5.0),
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        childAspectRatio: ((MediaQuery.of(context).size.width / 3) + 10) / 250,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        children: movie
+            .map((a) => Container(
+                  // width: 150,
+                  // height: 270,
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MovieScreen(movieid: a.id),
+                      ),
+                    ),
+                    child: Container(
+                      //color: Colors.red,
+
+                      //padding: EdgeInsets.fromLTRB(5, 15, 5, 15),
+                      // margin: EdgeInsets.symmetric(
+                      //   horizontal: 5.0,
+                      //   vertical: 15.0,
+                      // ),
+                      //width: 150,
+                      // decoration: BoxDecoration(
+                      //   borderRadius: BorderRadius.circular(10.0),
+                      //   boxShadow: [
+                      //     BoxShadow(
+                      //       color: Colors.black54,
+                      //       offset: Offset(0.0, 4.0),
+                      //       blurRadius: 6.0,
+                      //     ),
+                      //   ],
+                      // ),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(13.0),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'assets/images/source.gif',
+                                height: 180.0,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                image: a.tvShowPoster,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            a.title,
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 14.0),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ))
+            .toList(),
+      );
 
   @override
   Widget buildSuggestions(BuildContext context) {
@@ -419,106 +486,66 @@ class AnimeSearch extends SearchDelegate<Movie> {
 
         if (results.isNotEmpty) {
           if (query.isNotEmpty) {
-            return ListView(
-              children: results
-                  .map<Padding>((a) => Padding(
-                        padding: EdgeInsets.only(top: 8.0),
-                        child: Material(
-                          color: Colors.white,
-                          elevation: 14.0,
-                          //margin: EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 0.0),
-                          borderRadius: BorderRadius.circular(24.0),
-                          shadowColor: Colors.black,
-                          child: ListTile(
-                            title: Text(
-                              a.title,
-                              // style: TextStyle(
-                              //   fontSize: 18.0,
-                              //   fontWeight: FontWeight.w600,
-                              //   color: Colors.purple,
-                              // ),
-                              textAlign: TextAlign.justify,
-                            ),
-                            onTap: () => {
-                              close(context, a),
-                            },
-                          ),
-                        ),
-                      ))
-                  .toList(),
-            );
-          }
-          final bestAnime =
-              snapshot.data.where((a) => a.typeMovie == "Featured");
-          return ListView(
-              physics: ScrollPhysics(),
-              shrinkWrap: true,
+            return Container(
+                child: Column(
               children: <Widget>[
                 SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.live_tv,
-                        size: 30,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Best Anime Series of All Time',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
+                  height: 10,
                 ),
                 SizedBox(
                   height: 10,
                 ),
-                Divider(
-                  indent: 15,
-                  endIndent: 15,
-                  color: Colors.black38,
+                new Expanded(
+                  child: gridView(results.toList(), context),
                 ),
-                ListView(
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-                  children: bestAnime
-                      .map<Padding>((a) => Padding(
-                            padding: EdgeInsets.only(
-                                top: 8.0, left: 8.0, right: 8.0),
-                            child: Material(
-                              color: Colors.white,
-                              elevation: 14.0,
-                              //margin: EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 0.0),
-                              borderRadius: BorderRadius.circular(24.0),
-                              shadowColor: Colors.black,
-                              child: ListTile(
-                                title: Text(
-                                  a.title,
-                                  // style: TextStyle(
-                                  //   fontSize: 18.0,
-                                  //   fontWeight: FontWeight.w600,
-                                  //   color: Colors.purple,
-                                  // ),
-                                  textAlign: TextAlign.justify,
-                                ),
-                                onTap: () => {
-                                  close(context, a),
-                                },
-                              ),
-                            ),
-                          ))
-                      .toList(),
+                SizedBox(
+                  height: 20,
                 ),
-              ]);
+              ],
+            ));
+          }
+          final bestAnime =
+              snapshot.data.where((a) => a.typeMovie == "Featured");
+          return Container(
+            child: Column(children: <Widget>[
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25.0),
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.live_tv,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Best Anime Series of All Time',
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Divider(
+                indent: 15,
+                endIndent: 15,
+                color: Colors.black38,
+              ),
+              new Expanded(
+                child: gridView(bestAnime.toList(), context),
+              ),
+            ]),
+          );
         }
         return Center(
           child: Text('No result found'),

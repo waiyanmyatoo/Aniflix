@@ -120,7 +120,10 @@ class _MovieScreenState extends State<MovieScreen> {
         stream: DatabaseServices().anime,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Container();
+            return CircularProgressIndicator(
+              backgroundColor: Colors.white38,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            );
           }
 
           final result =
@@ -129,6 +132,7 @@ class _MovieScreenState extends State<MovieScreen> {
           if (result.isNotEmpty) {
             return Scaffold(
               //backgroundColor: Color(0xff1c1742),
+              //backgroundColor: Color(0xff171723),
               backgroundColor: Color(0xff001030),
               body: SafeArea(
                 child: OfflineBuilder(
@@ -193,13 +197,13 @@ class _MovieScreenState extends State<MovieScreen> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        // leading: IconButton(
-                        //   padding: EdgeInsets.only(left: 30.0),
-                        //   onPressed: () => Navigator.pop(context),
-                        //   icon: Icon(Icons.arrow_back),
-                        //   iconSize: 25.0,
-                        //   color: Colors.white,
-                        // ),
+                        leading: IconButton(
+                          padding: EdgeInsets.only(left: 30.0),
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.arrow_back),
+                          iconSize: 25.0,
+                          color: Colors.white,
+                        ),
                         // actions: <Widget>[
                         //   IconButton(
                         //     padding: EdgeInsets.only(right: 30.0),
@@ -209,8 +213,8 @@ class _MovieScreenState extends State<MovieScreen> {
                         //     color: Colors.white,
                         //   ),
                         // ],
-                        //backgroundColor: Color(0xff1c1742),
                         backgroundColor: Color(0xff001030),
+                        //backgroundColor: Color(0xff001030),
                         elevation: 0.0,
                         pinned: true,
                         expandedHeight:
@@ -561,10 +565,12 @@ class _MovieScreenState extends State<MovieScreen> {
   Widget _buildRow(String id) {
     final bool alreadySaved = _saved.contains(id);
     return IconButton(
+      alignment: Alignment.topCenter,
+      iconSize: 23,
       icon: new Icon(
         // Add the lines from here...
         alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : Colors.white,
+        color: alreadySaved ? Colors.white : Colors.white,
       ),
       onPressed: () async {
         setState(() {

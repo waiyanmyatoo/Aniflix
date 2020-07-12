@@ -77,7 +77,10 @@ class _AnimeMoviesState extends State<AnimeMovies> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
-            child: Text('No data!'),
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.white38,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
           );
         }
         result = snapshot.data.where((a) => a.type == widget.type).toList();
