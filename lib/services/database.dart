@@ -9,32 +9,34 @@ class DatabaseServices {
   DatabaseServices() : _db = Firestore.instance.collection(_baseUrl);
 
   Future updateAnime(
-    String id,
+    String name,
+    String img,
+    String type,
+    String aired,
+    String status,
+    String genre,
+    double score,
+    String length,
+    String animeuri,
+    String desc,
   ) async {
     String aid;
     if (aid == null) aid = _db.document().documentID;
 
-    return await _db.document(id).setData({
-      "Id": id,
-      "ImageUrl": 'https://gogocdn.net/images/anime/One-piece.jpg',
-      "Title": 'Naruto: Shippuuden',
-      "TvShowPoster": 'https://gogocdn.net/images/anime/One-piece.jpg',
-      "Type": 'TV',
+    return await _db.document(name).setData({
+      "Id": name,
+      "ImageUrl": img,
+      "Title": name,
+      "TvShowPoster": img,
+      "Type": type,
       "TypeMovie": 'Popular',
-      "Categories":
-          'Action, Adventure, Comedy, Super Power, Martial Arts, Shounen',
-      "Rating": 3,
-      "Released": '2007',
-      "Status": 'Complete',
-      "Length": '23 min. per ep.',
-      "Description":
-          'It has been two and a half years since Naruto Uzumaki left Konohagakure, the Hidden Leaf Village, for intense training following events which fueled his desire to be stronger. Now Akatsuki, the mysterious organization of elite rogue ninja, is closing in on their grand plan which may threaten the safety of the entire shinobi world',
-      "CreatedIn": DateTime.now(),
-      "Episode": [
-        '1',
-        '2',
-        '3',
-      ]
+      "Categories": genre,
+      "Rating": score,
+      "Year": aired,
+      "Status": status,
+      "Length": length,
+      "Description": desc,
+      "Uri": animeuri,
     });
   }
 
@@ -53,8 +55,8 @@ class DatabaseServices {
         status: doc.data['Status'],
         length: doc.data['Length'],
         description: doc.data['Description'],
-        createdIn: doc.data['CreatedIn'].toDate(),
-        episode: List.from(doc.data['Episode']),
+        //createdIn: doc.data['CreatedIn'].toDate(),
+        //episode: List.from(doc.data['Episode']),
         uri: doc.data['Uri'],
       );
     }).toList();

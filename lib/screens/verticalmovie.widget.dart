@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_netflix_ui_redesign/models/movie_model.dart';
 import 'package:flutter_netflix_ui_redesign/screens/dynamicScreen.dart';
@@ -84,7 +85,10 @@ class VerticalMovieWidge extends StatelessWidget {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => MovieScreen(movieid: movies[index].id),
+                  builder: (_) => MovieScreen(
+                    movieid: movies[index].id,
+                    animeUri: movies[index].uri,
+                  ),
                 ),
               ),
               child: Container(
@@ -111,12 +115,24 @@ class VerticalMovieWidge extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/images/source.gif',
+                        //   child: FadeInImage.assetNetwork(
+                        //     placeholder: 'assets/images/source.gif',
+                        //     height: 190.0,
+                        //     width: double.infinity,
+                        //     fit: BoxFit.cover,
+                        //     image: movies[index].tvShowPoster,
+                        //   ),
+                        child: CachedNetworkImage(
                           height: 190.0,
-                          width: double.infinity,
                           fit: BoxFit.cover,
-                          image: movies[index].tvShowPoster,
+                          width: double.infinity,
+                          imageUrl: movies[index].tvShowPoster,
+                          placeholder: (context, url) => Image.asset(
+                            'assets/images/source.gif',
+                            height: 190,
+                          ),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
                       ),
                     ),

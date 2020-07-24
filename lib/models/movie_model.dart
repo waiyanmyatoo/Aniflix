@@ -11,8 +11,8 @@ class Movie {
   String status;
   String length;
   String description;
-  DateTime createdIn;
-  List<String> episode;
+  //DateTime createdIn;
+  //List<String> episode;
   String uri;
 
   Movie({
@@ -28,8 +28,8 @@ class Movie {
     this.status,
     this.length,
     this.description,
-    this.createdIn,
-    this.episode,
+    //this.createdIn,
+    //this.episode,
     this.uri,
   });
 }

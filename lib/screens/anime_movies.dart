@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_netflix_ui_redesign/models/movie_model.dart';
 import 'package:flutter_netflix_ui_redesign/screens/movie_screen.dart';
@@ -139,64 +140,55 @@ class _AnimeMoviesState extends State<AnimeMovies> {
                         height: 10,
                       ),
                       Flexible(
-                        child: ListView(shrinkWrap: true, children: <Widget>[
-                          Wrap(
-                              direction: Axis.horizontal,
-                              spacing: 3.0,
-                              runSpacing: 3.0,
-                              children: _genres
-                                  .map<Column>((a) => Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: RaisedButton(
-                                                color: new Color(0xffeadffd),
-                                                child: Text(
-                                                  a.toString(),
-                                                  style: TextStyle(
-                                                    color:
-                                                        new Color(0xff6200ee),
-                                                  ),
-                                                ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _selectedGenre =
-                                                        a.toString();
-                                                    print(_selectedGenre);
-                                                    result = anime
-                                                        .where((e) =>
-                                                            e.categories
-                                                                .toLowerCase()
-                                                                .contains(a
-                                                                    .toString()
-                                                                    .toLowerCase()) &&
-                                                            e.type ==
-                                                                widget.type)
-                                                        .toList();
-                                                    if (a == 'All') {
-                                                      finalResult =
-                                                          initStateAnime();
-                                                    } else if (result.isEmpty) {
-                                                      finalResult = noAnime();
-                                                    } else
-                                                      finalResult = gridView(
-                                                          result, context);
-                                                  });
-                                                },
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          30.0),
-                                                )),
+                        child: GridView.count(
+                          shrinkWrap: true,
+                          //padding: EdgeInsets.all(2.0),
+                          crossAxisCount: 4,
+                          mainAxisSpacing: 25,
+                          crossAxisSpacing: 5,
+                          childAspectRatio: 150 / 60,
+                          children: _genres
+                              .map((a) => Container(
+                                    child: RaisedButton(
+                                        color: new Color(0xff001030)
+                                            .withOpacity(0.8),
+                                        child: Text(
+                                          a.toString(),
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: new Color(0xffffffff),
                                           ),
-                                        ],
-                                      ))
-                                  .toList()),
-                        ]),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _selectedGenre = a.toString();
+                                            print(_selectedGenre);
+                                            result = anime
+                                                .where((e) =>
+                                                    e.categories
+                                                        .toLowerCase()
+                                                        .contains(a
+                                                            .toString()
+                                                            .toLowerCase()) &&
+                                                    e.type == widget.type)
+                                                .toList();
+                                            if (a == 'All') {
+                                              finalResult = initStateAnime();
+                                            } else if (result.isEmpty) {
+                                              finalResult = noAnime();
+                                            } else
+                                              finalResult =
+                                                  gridView(result, context);
+                                          });
+                                        },
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        )),
+                                  ))
+                              .toList(),
+                        ),
                       )
                     ],
                   ),
@@ -291,12 +283,24 @@ class _AnimeMoviesState extends State<AnimeMovies> {
                           Container(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(13.0),
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/images/source.gif',
+                              // child: FadeInImage.assetNetwork(
+                              //   placeholder: 'assets/images/source.gif',
+                              //   height: 180.0,
+                              //   width: double.infinity,
+                              //   fit: BoxFit.cover,
+                              //   image: a.tvShowPoster,
+                              // ),
+                              child: CachedNetworkImage(
                                 height: 180.0,
-                                width: double.infinity,
                                 fit: BoxFit.cover,
-                                image: a.tvShowPoster,
+                                width: double.infinity,
+                                imageUrl: a.tvShowPoster,
+                                placeholder: (context, url) => Image.asset(
+                                  'assets/images/source.gif',
+                                  height: 180,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
                               ),
                             ),
                           ),

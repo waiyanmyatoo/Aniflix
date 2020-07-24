@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_netflix_ui_redesign/models/movie_model.dart';
 import 'package:flutter_netflix_ui_redesign/screens/movie_screen.dart';
@@ -281,12 +282,24 @@ class _AnimeSeriesState extends State<AnimeSeries> {
                           Container(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(13.0),
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/images/source.gif',
+                              // child: FadeInImage.assetNetwork(
+                              //   placeholder: 'assets/images/source.gif',
+                              //   height: 180.0,
+                              //   width: double.infinity,
+                              //   fit: BoxFit.cover,
+                              //   image: a.tvShowPoster,
+                              // ),
+                              child: CachedNetworkImage(
                                 height: 180.0,
-                                width: double.infinity,
                                 fit: BoxFit.cover,
-                                image: a.tvShowPoster,
+                                width: double.infinity,
+                                imageUrl: a.tvShowPoster,
+                                placeholder: (context, url) => Image.asset(
+                                  'assets/images/source.gif',
+                                  height: 180,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
                               ),
                             ),
                           ),
