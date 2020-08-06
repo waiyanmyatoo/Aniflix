@@ -4,6 +4,7 @@ import 'package:flutter_netflix_ui_redesign/screens/movie_screen.dart';
 import 'package:flutter_netflix_ui_redesign/screens/verticalmovie.widget.dart';
 import 'package:flutter_netflix_ui_redesign/services/database.dart';
 import 'package:flutter_netflix_ui_redesign/widgets/content_scroll.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:frefresh/frefresh.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -118,16 +119,23 @@ class _FeaturedState extends State<Featured> {
                             ),
                           ),
                           Positioned(
-                            left: 30.0,
-                            bottom: 40.0,
+                            left: 0.0,
+                            right: 0.0,
+                            bottom: 10.0,
                             child: Container(
+                              color: Hexcolor('#18242b')
+                                  .withBlue(60)
+                                  .withOpacity(0.6),
                               width: 250.0,
-                              child: Text(
-                                result[index].title.toUpperCase(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
+                              height: 40,
+                              child: Center(
+                                child: Text(
+                                  result[index].title.toUpperCase(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -151,7 +159,7 @@ class _FeaturedState extends State<Featured> {
                     width: 130.0,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.white,
+                      color: Hexcolor('#84C9FB').withAlpha(40),
                       // gradient: LinearGradient(
                       //   begin: Alignment.topLeft,
                       //   end: Alignment.bottomRight,
@@ -172,7 +180,8 @@ class _FeaturedState extends State<Featured> {
                       child: Text(
                         labels[index].toUpperCase(),
                         style: TextStyle(
-                          color: Color(0xff001030),
+                          //color: Color(0xff001030),
+                          color: Hexcolor('#84C9FB'),
                           fontSize: 14.0,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.8,

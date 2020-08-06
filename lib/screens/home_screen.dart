@@ -11,6 +11,7 @@ import 'package:flutter_netflix_ui_redesign/screens/movie_screen.dart';
 import 'package:flutter_netflix_ui_redesign/splashScreen.dart';
 import 'package:flutter_netflix_ui_redesign/widgets/content_scroll.dart';
 import 'package:flutter_netflix_ui_redesign/services/database.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_offline/flutter_offline.dart';
@@ -116,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
       fontFamily: 'Bebas Neue',
       fontSize: 23.0,
       fontWeight: FontWeight.bold,
-      color: Colors.white,
+      color: Hexcolor('#84C9FB'),
       letterSpacing: 2.0,
     ),
     textAlign: TextAlign.center,
@@ -201,7 +202,8 @@ class _HomeScreenState extends State<HomeScreen> {
           //   ],
           // ),
           //color: Color(0xff171723),
-          color: Color(0xff001030),
+          //color: Color(0xff001030),
+          color: Hexcolor('#18242b').withBlue(60),
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -256,43 +258,58 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          body: SafeArea(
-            child: WillPopScope(
-              onWillPop: onWillPop,
-              child: OfflineBuilder(
-                connectivityBuilder: (BuildContext context,
-                    ConnectivityResult connectivity, Widget child) {
-                  final bool connected =
-                      connectivity != ConnectivityResult.none;
-                  if (connected == true) {
-                    return finalConnection =
-                        connectionState(callPage(_currentIndex));
-                  }
-                  return finalConnection = connectionState(connectionOffline());
-                },
-                child: Container(child: finalConnection),
+          body: Column(
+            children: <Widget>[
+              Expanded(
+                child: SafeArea(
+                  child: WillPopScope(
+                    onWillPop: onWillPop,
+                    child: OfflineBuilder(
+                      connectivityBuilder: (BuildContext context,
+                          ConnectivityResult connectivity, Widget child) {
+                        final bool connected =
+                            connectivity != ConnectivityResult.none;
+                        if (connected == true) {
+                          return finalConnection =
+                              connectionState(callPage(_currentIndex));
+                        }
+                        return finalConnection =
+                            connectionState(connectionOffline());
+                      },
+                      child: Container(child: finalConnection),
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Container(
+                color: Colors.transparent,
+                child: SizedBox(
+                  height: 10,
+                ),
+              )
+            ],
           ),
           bottomNavigationBar: CurvedNavigationBar(
-            color: Colors.white,
+            color: Hexcolor('#84C9FB').withAlpha(40),
             animationDuration: Duration(
               milliseconds: 500,
             ),
             animationCurve: Curves.easeInOut,
-            backgroundColor: Color(0xff001030),
+            //backgroundColor: Color(0xff001030),
+            backgroundColor: Hexcolor('#18242b').withBlue(60),
             height: MediaQuery.of(context).padding.top * 2,
             index: 2,
             items: <Widget>[
               Icon(
                 Icons.movie,
                 size: 25.0,
-                color: Color(0xff000f34),
+                //color: Color(0xff000f34),
+                color: Colors.white,
               ),
-              Icon(Icons.live_tv, size: 25.0, color: Color(0xff000f34)),
-              Icon(Icons.home, size: 25.0, color: Color(0xff000f34)),
-              Icon(Icons.favorite, size: 25.0, color: Color(0xff000f34)),
-              Icon(Icons.settings, size: 25.0, color: Color(0xff000f34)),
+              Icon(Icons.live_tv, size: 25.0, color: Colors.white),
+              Icon(Icons.home, size: 25.0, color: Colors.white),
+              Icon(Icons.favorite, size: 25.0, color: Colors.white),
+              Icon(Icons.settings, size: 25.0, color: Colors.white),
             ],
             onTap: (index) {
               setState(() {

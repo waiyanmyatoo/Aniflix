@@ -16,6 +16,9 @@ import 'package:video_player/video_player.dart';
 import 'package:flutter/foundation.dart';
 
 class WebViewTut extends StatefulWidget {
+  final String url;
+  final String ep;
+  WebViewTut({this.url, this.ep});
   @override
   _WebViewTutState createState() => _WebViewTutState();
 }
@@ -27,10 +30,12 @@ class _WebViewTutState extends State<WebViewTut> {
   //final Completer<WebViewController> _controller = Completer<WebViewController>();
   //VideoPlayerController _controller;
   //WebViewController _controller;
+  String launchurl;
 
   @override
   void initState() {
     super.initState();
+    htmlget();
     // _controller = VideoPlayerController.network(
     //     'https://storage.googleapis.com/linear-theater-254209.appspot.com/v3.4animu.me/One-Piece/One-Piece-01-1080p.mp4')
     //   ..initialize().then((_) {
@@ -39,13 +44,17 @@ class _WebViewTutState extends State<WebViewTut> {
     //   });
   }
 
+  String finalLink;
   Future<String> htmlget() async {
     final String _baseUrl =
         "https://floating-thicket-76387.herokuapp.com/api/info?url=";
-    final response = await http.get(
-        Uri.parse('https://www19.gogoanime.io/koe-no-katachi-movie-episode-1'));
-    String finalLink = null;
+    String urlLink =
+        widget.url.replaceAll('category/', '') + "-episode-" + widget.ep;
+    print(urlLink);
+    final response = await http.get(Uri.parse(urlLink));
+
     if (response.statusCode == 200) {
+      print(response.statusCode);
       RegExp regExp = new RegExp(
         r'hd_src:"(.+?)"',
         caseSensitive: true,
@@ -63,7 +72,7 @@ class _WebViewTutState extends State<WebViewTut> {
 
       var stage3 = document1.body.querySelector('div[id="list-server-more"]');
       var links = stage3.querySelectorAll('li[class="linkserver"]');
-      String streamLink = null;
+      String streamLink = '';
 
       for (var i = 0; i < links.length; i++) {
         if (links[i]
@@ -88,7 +97,10 @@ class _WebViewTutState extends State<WebViewTut> {
             await http.get(Uri.parse(_baseUrl + decoder['info']['url']));
         if (response3.statusCode == 200) {
           Map decoder1 = jsonDecode(response3.body);
-          finalLink = decoder1['info']['url'];
+          setState(() {
+            finalLink = decoder1['info']['url'];
+          });
+
           print(decoder['info']['url']);
           // final pattern =
           //     new RegExp('.{1,800}'); // 800 is the size of each chunk
@@ -136,26 +148,31 @@ class _WebViewTutState extends State<WebViewTut> {
     // }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Future<void> _videoLaunch(String url) async {
-      if (await canLaunch(url)) {
-        final bool nativeAppLaunchSucceeded = await launch(
+  Future<void> _videoLaunch(String url) async {
+    if (await canLaunch(url)) {
+      final bool nativeAppLaunchSucceeded = await launch(
+        url,
+        forceSafariVC: false,
+        universalLinksOnly: true,
+      );
+      if (!nativeAppLaunchSucceeded) {
+        await launch(
           url,
-          forceSafariVC: false,
-          universalLinksOnly: true,
+          forceSafariVC: true,
         );
-        if (!nativeAppLaunchSucceeded) {
-          await launch(
-            url,
-            forceSafariVC: true,
-          );
-        }
       }
     }
+  }
 
+  returnWg(BuildContext context, String url) {
+    Navigator.pop(context);
+    _videoLaunch(url);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xff001030),
+      backgroundColor: Color(0xff001030),
 //         body: WebView(
 //           javascriptMode: JavascriptMode.unrestricted,
 //           //debuggingEnabled: true,
@@ -173,218 +190,198 @@ class _WebViewTutState extends State<WebViewTut> {
 //               '''));
 //           },
 //         ));
-        // body: WebviewScaffold(
-        //   url: ,
-        //   hidden: true,
-        //   ignoreSSLErrors: true,
-        //   // clearCache: true,
-        //   // clearCookies: true,
-        //   mediaPlaybackRequiresUserGesture: false,
-        // );
-        body: FutureBuilder(
-            future: htmlget(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                _videoLaunch(snapshot.data);
-                // return Center(
+      // body: WebviewScaffold(
+      //   url: ,
+      //   hidden: true,
+      //   ignoreSSLErrors: true,
+      //   // clearCache: true,
+      //   // clearCookies: true,
+      //   mediaPlaybackRequiresUserGesture: false,
+      // );
+      body: Center(
+        child: finalLink != null
+            ? returnWg(context, finalLink)
+            : CircularProgressIndicator(),
+      ),
 
-                //   child: Container(
-                //     color: Colors.white,
-                //     child: FlatButton(
-                //       child: Text('Press here'),
-                //       onPressed: () {
-                //         // Navigator.push(
-                //         //   context,
-                //         //   MaterialPageRoute(
-                //         //     builder: (_) => ChewieDemo(url: snapshot.data),
-                //         //   ),
-                //         // );
+      //   body: Center(
+      //     child: _controller.value.initialized
+      //         ? AspectRatio(
+      //             aspectRatio: _controller.value.aspectRatio,
+      //             child: VideoPlayer(_controller),
+      //           )
+      //         : Container(),
+      //   ),
+      //   floatingActionButton: FloatingActionButton(
+      //     onPressed: () {
+      //       setState(() {
+      //         _controller.value.isPlaying
+      //             ? _controller.pause()
+      //             : _controller.play();
+      //       });
+      //     },
+      //     child: Icon(
+      //       _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+      //     ),
+      //   ),
+      // );
+    );
+    // Uint8List image;
 
-                //       },
-                //     ),
-                //   ),
-                // );
-              } else
-                return Container();
-            }));
+    // VlcPlayerController _videoViewController;
+    // VlcPlayerController _videoViewController2;
+    // bool isPlaying = true;
+    // double sliderValue = 0.0;
+    // double currentPlayerTime = 0;
 
-    //   body: Center(
-    //     child: _controller.value.initialized
-    //         ? AspectRatio(
-    //             aspectRatio: _controller.value.aspectRatio,
-    //             child: VideoPlayer(_controller),
-    //           )
-    //         : Container(),
-    //   ),
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: () {
+    // @override
+    // void initState() {
+    //   _videoViewController = new VlcPlayerController(onInit: () {
+    //     _videoViewController.play();
+    //   });
+    //   _videoViewController.addListener(() {
+    //     setState(() {});
+    //   });
+
+    //   _videoViewController2 = new VlcPlayerController(onInit: () {
+    //     _videoViewController2.play();
+    //   });
+    //   _videoViewController2.addListener(() {
+    //     setState(() {});
+    //   });
+
+    //   Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    //     String state = _videoViewController2.playingState.toString();
+    //     if (this.mounted) {
     //       setState(() {
-    //         _controller.value.isPlaying
-    //             ? _controller.pause()
-    //             : _controller.play();
+    //         if (state == "PlayingState.PLAYING" &&
+    //             sliderValue < _videoViewController2.duration.inSeconds) {
+    //           sliderValue = _videoViewController2.position.inSeconds.toDouble();
+    //         }
     //       });
-    //     },
-    //     child: Icon(
-    //       _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+    //     }
+    //   });
+
+    //   super.initState();
+    // }
+
+    // @override
+    // Widget build(BuildContext context) {
+    //   return new Scaffold(
+    //     appBar: new AppBar(
+    //       title: const Text('Plugin example app'),
     //     ),
-    //   ),
-    // );
+    //     floatingActionButton: FloatingActionButton(
+    //       child: Icon(Icons.camera),
+    //       onPressed: _createCameraImage,
+    //     ),
+    //     body: Center(
+    //       child: ListView(
+    //         shrinkWrap: true,
+    //         children: <Widget>[
+    //           SizedBox(
+    //             height: 360,
+    //             child: new VlcPlayer(
+    //               aspectRatio: 16 / 9,
+    //               url:
+    //                   "https://animevibe.tv/players/iframe.php?vid=https://vidstreaming.io/streaming.php?id=MzUxOA==&title=One+Piece+Episode+1",
+    //               controller: _videoViewController,
+    //               placeholder: Container(
+    //                 height: 250.0,
+    //                 child: Row(
+    //                   mainAxisAlignment: MainAxisAlignment.center,
+    //                   children: <Widget>[CircularProgressIndicator()],
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //           SizedBox(
+    //             height: 360,
+    //             child: new VlcPlayer(
+    //               aspectRatio: 16 / 9,
+    //               url: "https://www.novelplanet.me/v/qy8qqce42j84lnm",
+    //               controller: _videoViewController2,
+    //               placeholder: Container(
+    //                 height: 250.0,
+    //                 child: Row(
+    //                   mainAxisAlignment: MainAxisAlignment.center,
+    //                   children: <Widget>[CircularProgressIndicator()],
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //           Slider(
+    //             activeColor: Colors.white,
+    //             value: sliderValue,
+    //             min: 0.0,
+    //             max: _videoViewController2.duration == null
+    //                 ? 1.0
+    //                 : _videoViewController2.duration.inSeconds.toDouble(),
+    //             onChanged: (progress) {
+    //               setState(() {
+    //                 sliderValue = progress.floor().toDouble();
+    //               });
+    //               //convert to Milliseconds since VLC requires MS to set time
+    //               _videoViewController2.setTime(sliderValue.toInt() * 1000);
+    //             },
+    //           ),
+    //           FlatButton(
+    //               child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+    //               onPressed: () => {playOrPauseVideo()}),
+    //           FlatButton(
+    //             child: Text("Change URL"),
+    //             onPressed: () => _videoViewController.setStreamUrl(
+    //                 "https://animevibe.tv/players/iframe.php?vid=https://vidstreaming.io/streaming.php?id=MzUxOA==&title=One+Piece+Episode+1"),
+    //           ),
+    //           FlatButton(
+    //               child: Text("+speed"),
+    //               onPressed: () => _videoViewController.setPlaybackSpeed(2.0)),
+    //           FlatButton(
+    //               child: Text("Normal"),
+    //               onPressed: () => _videoViewController.setPlaybackSpeed(1)),
+    //           FlatButton(
+    //               child: Text("-speed"),
+    //               onPressed: () => _videoViewController.setPlaybackSpeed(0.5)),
+    //           Text("position=" +
+    //               _videoViewController.position.inSeconds.toString() +
+    //               ", duration=" +
+    //               _videoViewController.duration.inSeconds.toString() +
+    //               ", speed=" +
+    //               _videoViewController.playbackSpeed.toString()),
+    //           Text("ratio=" + _videoViewController.aspectRatio.toString()),
+    //           Text("size=" +
+    //               _videoViewController.size.width.toString() +
+    //               "x" +
+    //               _videoViewController.size.height.toString()),
+    //           Text("state=" + _videoViewController.playingState.toString()),
+    //           image == null ? Container() : Container(child: Image.memory(image)),
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // }
+
+    // void playOrPauseVideo() {
+    //   String state = _videoViewController2.playingState.toString();
+
+    //   if (state == "PlayingState.PLAYING") {
+    //     _videoViewController2.pause();
+    //     setState(() {
+    //       isPlaying = false;
+    //     });
+    //   } else {
+    //     _videoViewController2.play();
+    //     setState(() {
+    //       isPlaying = true;
+    //     });
+    //   }
+    // }
+
+    // void _createCameraImage() async {
+    //   Uint8List file = await _videoViewController.takeSnapshot();
+    //   setState(() {
+    //     image = file;
+    //   });
+    // }
   }
-  // Uint8List image;
-
-  // VlcPlayerController _videoViewController;
-  // VlcPlayerController _videoViewController2;
-  // bool isPlaying = true;
-  // double sliderValue = 0.0;
-  // double currentPlayerTime = 0;
-
-  // @override
-  // void initState() {
-  //   _videoViewController = new VlcPlayerController(onInit: () {
-  //     _videoViewController.play();
-  //   });
-  //   _videoViewController.addListener(() {
-  //     setState(() {});
-  //   });
-
-  //   _videoViewController2 = new VlcPlayerController(onInit: () {
-  //     _videoViewController2.play();
-  //   });
-  //   _videoViewController2.addListener(() {
-  //     setState(() {});
-  //   });
-
-  //   Timer.periodic(Duration(seconds: 1), (Timer timer) {
-  //     String state = _videoViewController2.playingState.toString();
-  //     if (this.mounted) {
-  //       setState(() {
-  //         if (state == "PlayingState.PLAYING" &&
-  //             sliderValue < _videoViewController2.duration.inSeconds) {
-  //           sliderValue = _videoViewController2.position.inSeconds.toDouble();
-  //         }
-  //       });
-  //     }
-  //   });
-
-  //   super.initState();
-  // }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return new Scaffold(
-  //     appBar: new AppBar(
-  //       title: const Text('Plugin example app'),
-  //     ),
-  //     floatingActionButton: FloatingActionButton(
-  //       child: Icon(Icons.camera),
-  //       onPressed: _createCameraImage,
-  //     ),
-  //     body: Center(
-  //       child: ListView(
-  //         shrinkWrap: true,
-  //         children: <Widget>[
-  //           SizedBox(
-  //             height: 360,
-  //             child: new VlcPlayer(
-  //               aspectRatio: 16 / 9,
-  //               url:
-  //                   "https://animevibe.tv/players/iframe.php?vid=https://vidstreaming.io/streaming.php?id=MzUxOA==&title=One+Piece+Episode+1",
-  //               controller: _videoViewController,
-  //               placeholder: Container(
-  //                 height: 250.0,
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: <Widget>[CircularProgressIndicator()],
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           SizedBox(
-  //             height: 360,
-  //             child: new VlcPlayer(
-  //               aspectRatio: 16 / 9,
-  //               url: "https://www.novelplanet.me/v/qy8qqce42j84lnm",
-  //               controller: _videoViewController2,
-  //               placeholder: Container(
-  //                 height: 250.0,
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: <Widget>[CircularProgressIndicator()],
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           Slider(
-  //             activeColor: Colors.white,
-  //             value: sliderValue,
-  //             min: 0.0,
-  //             max: _videoViewController2.duration == null
-  //                 ? 1.0
-  //                 : _videoViewController2.duration.inSeconds.toDouble(),
-  //             onChanged: (progress) {
-  //               setState(() {
-  //                 sliderValue = progress.floor().toDouble();
-  //               });
-  //               //convert to Milliseconds since VLC requires MS to set time
-  //               _videoViewController2.setTime(sliderValue.toInt() * 1000);
-  //             },
-  //           ),
-  //           FlatButton(
-  //               child: isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-  //               onPressed: () => {playOrPauseVideo()}),
-  //           FlatButton(
-  //             child: Text("Change URL"),
-  //             onPressed: () => _videoViewController.setStreamUrl(
-  //                 "https://animevibe.tv/players/iframe.php?vid=https://vidstreaming.io/streaming.php?id=MzUxOA==&title=One+Piece+Episode+1"),
-  //           ),
-  //           FlatButton(
-  //               child: Text("+speed"),
-  //               onPressed: () => _videoViewController.setPlaybackSpeed(2.0)),
-  //           FlatButton(
-  //               child: Text("Normal"),
-  //               onPressed: () => _videoViewController.setPlaybackSpeed(1)),
-  //           FlatButton(
-  //               child: Text("-speed"),
-  //               onPressed: () => _videoViewController.setPlaybackSpeed(0.5)),
-  //           Text("position=" +
-  //               _videoViewController.position.inSeconds.toString() +
-  //               ", duration=" +
-  //               _videoViewController.duration.inSeconds.toString() +
-  //               ", speed=" +
-  //               _videoViewController.playbackSpeed.toString()),
-  //           Text("ratio=" + _videoViewController.aspectRatio.toString()),
-  //           Text("size=" +
-  //               _videoViewController.size.width.toString() +
-  //               "x" +
-  //               _videoViewController.size.height.toString()),
-  //           Text("state=" + _videoViewController.playingState.toString()),
-  //           image == null ? Container() : Container(child: Image.memory(image)),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // void playOrPauseVideo() {
-  //   String state = _videoViewController2.playingState.toString();
-
-  //   if (state == "PlayingState.PLAYING") {
-  //     _videoViewController2.pause();
-  //     setState(() {
-  //       isPlaying = false;
-  //     });
-  //   } else {
-  //     _videoViewController2.play();
-  //     setState(() {
-  //       isPlaying = true;
-  //     });
-  //   }
-  // }
-
-  // void _createCameraImage() async {
-  //   Uint8List file = await _videoViewController.takeSnapshot();
-  //   setState(() {
-  //     image = file;
-  //   });
-  // }
 }

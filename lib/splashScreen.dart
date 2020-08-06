@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_netflix_ui_redesign/screens/home_screen.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -29,7 +30,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff001030),
+      //backgroundColor: Color(0xff001030),
+      backgroundColor: Hexcolor('#18242b').withBlue(60),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -44,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   fontFamily: 'Bebas Neue',
                   fontSize: 45.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Hexcolor('#84C9FB'),
                   letterSpacing: 4.0,
                 ),
                 textAlign: TextAlign.center,

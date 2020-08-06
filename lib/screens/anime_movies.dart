@@ -234,9 +234,9 @@ class _AnimeMoviesState extends State<AnimeMovies> {
         new Expanded(
           child: finalResult,
         ),
-        SizedBox(
-          height: 20,
-        ),
+        // SizedBox(
+        //   height: 20,
+        // ),
       ],
     ));
   }

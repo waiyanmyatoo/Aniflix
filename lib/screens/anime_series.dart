@@ -233,9 +233,9 @@ class _AnimeSeriesState extends State<AnimeSeries> {
         new Expanded(
           child: finalResult,
         ),
-        SizedBox(
-          height: 20,
-        ),
+        // SizedBox(
+        //   height: 10,
+        // ),
       ],
     ));
   }
